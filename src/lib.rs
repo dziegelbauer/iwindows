@@ -31,7 +31,7 @@ impl Window {
     }
 
     unsafe extern "system" fn wndproc(hwnd: HWND, message: u32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
-        let win = Box::from_raw(GetWindowLongPtrA(hwnd, GWLP_USERDATA) as *mut Window); //std::mem::transmute(GetWindowLongPtrA(hwnd, GWLP_USERDATA));
+        //let win = Box::from_raw(GetWindowLongPtrA(hwnd, GWLP_USERDATA) as *mut Window); //std::mem::transmute(GetWindowLongPtrA(hwnd, GWLP_USERDATA));
         match message {
             WM_CLOSE => {
                 DestroyWindow(hwnd);
@@ -84,7 +84,9 @@ impl Window {
                                                     std::ptr::null()
                                                 ));
             
-            SetWindowLongPtrA(self.handle.clone().unwrap(), GWLP_USERDATA, std::mem::transmute_copy(&self));
+            let class_ptr: isize = std::mem::transmute(&self);
+            println!("{:?}", class_ptr);
+            SetWindowLongPtrA(self.handle.clone().unwrap(), GWLP_USERDATA, class_ptr);
 
             self.initialized = true;
 
